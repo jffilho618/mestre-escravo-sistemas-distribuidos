@@ -86,30 +86,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # Cliente (Opcional - para testes dentro do container)
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: client
-    networks:
-      - distributed-system
-    depends_on:
-      master:
-        condition: service_healthy
-    environment:
-      - MASTER_URL=http://master:8080
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./client/input_files:/app/input_files:ro
-    profiles:
-      - client # Use 'docker-compose --profile client up' para incluir o cliente
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
 networks:
   distributed-system:
