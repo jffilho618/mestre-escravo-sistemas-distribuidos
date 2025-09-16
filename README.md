@@ -34,10 +34,10 @@ Este projeto implementa um sistema distribuído que processa texto de forma efic
 ```
 Máquina A (Servidor)          Máquina B (Cliente)
 ┌─────────────────────┐       ┌─────────────────────┐
-│  🐳 Docker Compose  │  ⟷   │  🖥️ Cliente PyQt5  │
-│   🎛️ Master (8080)   │       │                     │
-│   📝 Slave-Letters   │       │  Enviará arquivos   │
-│   🔢 Slave-Numbers   │       │  via HTTP REST      │
+│  🐳 Docker Compose  │  ⟷  │  🖥️ Cliente PyQt5   │
+│   🎛️ Master (8080)  │      │                      │
+│   📝 Slave-Letters  │      │  Enviará arquivos    │
+│   🔢 Slave-Numbers  │      │  via HTTP REST       │
 └─────────────────────┘       └─────────────────────┘
       IP: 192.168.1.100             IP: 192.168.1.101
 ```
@@ -71,7 +71,7 @@ graph TB
 
 ### 🖥️ Interface do Servidor
 
-![Servidor](docs/images/servidor.jpg)
+![Servidor](docs/images/servidor.png)
 _Tela do servidor mostrando logs e status dos serviços_
 
 ### 🖱️ Interface do Cliente
@@ -359,22 +359,24 @@ pip install -r requirements.txt --force-reinstall
 
 ```
 mestre-escravo-sistemas-distribuidos/
-├── 📁 master/              # Servidor mestre (Go)
-│   ├── main.go
-│   ├── Dockerfile
-│   └── go.mod
+├── 📁 master/              # Servidor mestre (C++)
+│   ├── src/
+│   ├── CMakeLists.txt
+│   └── Dockerfile
 ├── 📁 slave_letters/       # Escravo de letras (C++)
-│   ├── main.cpp
+│   ├── src/
+│   ├── CMakeLists.txt
 │   └── Dockerfile
 ├── 📁 slave_numbers/       # Escravo de números (C++)
-│   ├── main.cpp
+│   ├── src/
+│   ├── CMakeLists.txt
 │   └── Dockerfile
 ├── 📁 client/              # Cliente (Python)
 │   ├── client.py
 │   └── requirements.txt
-├── 📁 docs/                # Documentação
+├── 📁 docs/                # Documentação e imagens
 │   └── images/
-├── docker-compose.yml      # Orquestração
+├── docker-compose.yml      # Orquestração dos serviços
 └── README.md
 ```
 
