@@ -5,6 +5,8 @@
 #include <thread>
 #include <chrono>
 #include <algorithm>
+#include <future>
+#include <functional>
 
 using json = nlohmann::json;
 
@@ -61,6 +63,7 @@ bool MasterServer::start() {
 
         // Processamento principal
         server.Post("/process", [this](const httplib::Request& req, httplib::Response& res) {
+            Logger::info_f("Cliente conectado ao servidor mestre de %s", req.remote_addr.c_str());
             Logger::info("Requisição de processamento recebida");
 
             try {
@@ -167,9 +170,27 @@ std::string MasterServer::process_text_request(const std::string& text) {
             throw std::runtime_error("Nenhum escravo de números disponível");
         }
 
-        // Delegar processamento para escravos
-        std::string letters_result = delegate_to_slave(*letters_slave, text);
-        std::string numbers_result = delegate_to_slave(*numbers_slave, text);
+        // Delegar processamento para escravos EM PARALELO usando threads
+        Logger::info("Iniciando processamento paralelo com threads");
+
+        // Criar futures para execução paralela
+        std::future<std::string> letters_future = std::async(std::launch::async,
+            [this, letters_slave, &text]() {
+                Logger::debug("Thread de letras iniciada");
+                return delegate_to_slave(*letters_slave, text);
+            });
+
+        std::future<std::string> numbers_future = std::async(std::launch::async,
+            [this, numbers_slave, &text]() {
+                Logger::debug("Thread de números iniciada");
+                return delegate_to_slave(*numbers_slave, text);
+            });
+
+        // Aguardar resultados das duas threads
+        Logger::debug("Aguardando resultados das threads paralelas");
+        std::string letters_result = letters_future.get();
+        std::string numbers_result = numbers_future.get();
+        Logger::info("Processamento paralelo concluído");
 
         // Combinar resultados
         json letters_json = json::parse(letters_result);

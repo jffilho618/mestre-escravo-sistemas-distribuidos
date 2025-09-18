@@ -1,5 +1,6 @@
 {
   "files.associations": {
     "iomanip": "cpp"
-  }
+  },
+  "cmake.sourceDirectory": "C:/Users/jffil/OneDrive/Área de Trabalho/SIST DISTRIB/mestre-escravo-sistemas-distribuidos/master"
 }

@@ -41,6 +41,7 @@ bool LettersServer::start() {
 
         // Endpoint principal para contar letras
         server.Post("/letras", [this](const httplib::Request& req, httplib::Response& res) {
+            Logger::info_f("Cliente conectado ao escravo de letras de %s", req.remote_addr.c_str());
             Logger::info("Requisição de contagem de letras recebida");
 
             try {
