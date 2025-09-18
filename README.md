@@ -49,19 +49,21 @@ Máquina A (Servidor)          Máquina B (Cliente)
 ```mermaid
 graph TB
     Client[Cliente PyQt5] --> Master[Servidor Mestre :8080]
-    Master --> SlaveL[Escravo Letras :8081]
-    Master --> SlaveN[Escravo Números :8082]
+    Master --> |Thread Paralela| SlaveL[Escravo Letras :8081]
+    Master --> |Thread Paralela| SlaveN[Escravo Números :8082]
 
     Master --> |Agrega Resultados| Client
     SlaveL --> |Contagem Letras| Master
     SlaveN --> |Contagem Números| Master
 ```
 
+> **⚡ Paralelismo**: O mestre utiliza `std::async` para criar threads paralelas, enviando requisições simultaneamente aos escravos, melhorando significativamente a performance.
+
 ### Tecnologias Utilizadas
 
 | Componente          | Tecnologia         | Linguagem | Porta |
 | ------------------- | ------------------ | --------- | ----- |
-| **Servidor Mestre** | Go + Gin Framework | Go        | 8080  |
+| **Servidor Mestre** | C++ + httplib      | C++       | 8080  |
 | **Escravo Letras**  | C++ + httplib      | C++       | 8081  |
 | **Escravo Números** | C++ + httplib      | C++       | 8082  |
 | **Cliente**         | PyQt5 + requests   | Python    | -     |
@@ -82,6 +84,7 @@ _Interface gráfica do cliente com processamento de texto_
 ### Recursos Principais
 
 - ✅ **Processamento Distribuído**: Divisão inteligente de tarefas
+- ✅ **Processamento Paralelo**: Threads simultâneas para escravos
 - ✅ **Interface Gráfica**: Cliente PyQt5 moderno e intuitivo
 - ✅ **Processamento Assíncrono**: Não bloqueia a interface durante operações
 - ✅ **Suporte a Arquivos**: Processa arquivos de texto de qualquer tamanho

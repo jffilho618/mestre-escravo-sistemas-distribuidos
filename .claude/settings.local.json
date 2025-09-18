@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(New-Item -ItemType Directory -Path \"client\\src\", \"client\\input_files\" -Force)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(docker-compose build:*)"
     ],
     "deny": [],
     "ask": []

@@ -41,7 +41,7 @@ bool NumbersServer::start() {
 
         // Endpoint principal para contar números
         server.Post("/numeros", [this](const httplib::Request& req, httplib::Response& res) {
-            Logger::info_f("Cliente conectado ao escravo de números de %s", req.remote_addr.c_str());
+            Logger::info_f("Servidor mestre conectado ao escravo de números de %s", req.remote_addr.c_str());
             Logger::info("Requisição de contagem de números recebida");
 
             try {
