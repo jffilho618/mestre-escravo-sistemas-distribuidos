@@ -3,7 +3,13 @@
     "allow": [
       "Bash(New-Item -ItemType Directory -Path \"client\\src\", \"client\\input_files\" -Force)",
       "Bash(powershell:*)",
-      "Bash(docker-compose build:*)"
+      "Bash(docker-compose build:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(cmake:*)",
+      "Bash(pkg-config:*)"
     ],
     "deny": [],
     "ask": []

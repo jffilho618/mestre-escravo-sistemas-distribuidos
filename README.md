@@ -34,7 +34,7 @@ Este projeto implementa um sistema distribuído que processa texto de forma efic
 ```
 Máquina A (Servidor)          Máquina B (Cliente)
 ┌─────────────────────┐       ┌─────────────────────┐
-│  🐳 Docker Compose  │  ⟷  │  🖥️ Cliente PyQt5   │
+│  🐳 Docker Compose  │  ⟷  │  🖥️ Cliente Qt      │
 │   🎛️ Master (8080)  │      │                      │
 │   📝 Slave-Letters  │      │  Enviará arquivos    │
 │   🔢 Slave-Numbers  │      │  via HTTP REST       │
@@ -48,7 +48,7 @@ Máquina A (Servidor)          Máquina B (Cliente)
 
 ```mermaid
 graph TB
-    Client[Cliente PyQt5] --> Master[Servidor Mestre :8080]
+    Client[Cliente Qt] --> Master[Servidor Mestre :8080]
     Master --> |Thread Paralela| SlaveL[Escravo Letras :8081]
     Master --> |Thread Paralela| SlaveN[Escravo Números :8082]
 
@@ -61,13 +61,13 @@ graph TB
 
 ### Tecnologias Utilizadas
 
-| Componente          | Tecnologia         | Linguagem | Porta |
-| ------------------- | ------------------ | --------- | ----- |
-| **Servidor Mestre** | C++ + httplib      | C++       | 8080  |
-| **Escravo Letras**  | C++ + httplib      | C++       | 8081  |
-| **Escravo Números** | C++ + httplib      | C++       | 8082  |
-| **Cliente**         | PyQt5 + requests   | Python    | -     |
-| **Orquestração**    | Docker Compose     | YAML      | -     |
+| Componente          | Tecnologia        | Linguagem | Porta |
+| ------------------- | ----------------- | --------- | ----- |
+| **Servidor Mestre** | C++ + httplib     | C++       | 8080  |
+| **Escravo Letras**  | C++ + httplib     | C++       | 8081  |
+| **Escravo Números** | C++ + httplib     | C++       | 8082  |
+| **Cliente Qt**      | Qt6/Qt5 + httplib | C++       | -     |
+| **Orquestração**    | Docker Compose    | YAML      | -     |
 
 ## ⚡ Funcionalidades
 
@@ -85,7 +85,7 @@ _Interface gráfica do cliente com processamento de texto_
 
 - ✅ **Processamento Distribuído**: Divisão inteligente de tarefas
 - ✅ **Processamento Paralelo**: Threads simultâneas para escravos
-- ✅ **Interface Gráfica**: Cliente PyQt5 moderno e intuitivo
+- ✅ **Interface Gráfica**: Cliente Qt moderno e intuitivo
 - ✅ **Processamento Assíncrono**: Não bloqueia a interface durante operações
 - ✅ **Suporte a Arquivos**: Processa arquivos de texto de qualquer tamanho
 - ✅ **Entrada Manual**: Digite texto diretamente na interface
@@ -105,8 +105,9 @@ _Interface gráfica do cliente com processamento de texto_
 
 ### Para o Cliente
 
-- **Python** 3.7+
-- **pip** para instalação de dependências
+- **Qt6** ou **Qt5** (Core, Widgets, Network)
+- **CMake** 3.16+
+- **Compilador C++17** (GCC, Clang, MSVC)
 
 ### Verificação dos Pré-requisitos
 
@@ -115,9 +116,10 @@ _Interface gráfica do cliente com processamento de texto_
 docker --version
 docker-compose --version
 
-# Verificar Python
-python --version
-pip --version
+# Verificar Qt e CMake
+qmake --version
+cmake --version
+gcc --version
 
 # Verificar portas disponíveis (Windows)
 netstat -an | findstr "8080\|8081\|8082"
@@ -147,18 +149,30 @@ docker-compose logs -f
 
 ### 3️⃣ Executar o Cliente
 
+#### 🖥️ Cliente Qt (C++)
+
 ```bash
 # Navegar para o diretório do cliente
 cd client
 
-# Instalar dependências
-pip install -r requirements.txt
+# Opção 1: Usar qmake (Qt Project)
+qmake client.pro
+make
+./client
 
-# Executar cliente
-python client.py
+# Opção 2: Usar CMake
+mkdir build && cd build
+cmake ..
+make
+./client
 
-# Ou especificar servidor remoto
-python client.py 192.168.1.100 8080
+# Windows (usando qmake)
+qmake client.pro
+mingw32-make
+.\release\client.exe
+
+# Windows (usando build.bat)
+build.bat
 ```
 
 ### 4️⃣ Verificar Funcionamento
@@ -203,21 +217,27 @@ curl http://localhost:8080/health
 
 1. **Copiar pasta client** para a máquina cliente
 
-2. **Instalar dependências:**
+2. **Compilar cliente Qt:**
 
    ```bash
-   pip install -r requirements.txt
+   # CMake (recomendado)
+   mkdir build && cd build
+   cmake ..
+   make
+
+   # Ou qmake
+   qmake client.pro
+   make
    ```
 
 3. **Executar cliente apontando para servidor:**
 
    ```bash
-   # Método 1: Via linha de comando
-   python client.py 192.168.1.100 8080
+   # Executar cliente
+   ./client
 
-   # Método 2: Via interface gráfica
-   python client.py
-   # Depois configurar IP: 192.168.1.100, Porta: 8080
+   # Na interface gráfica, configurar:
+   # IP: 192.168.1.100, Porta: 8080
    ```
 
 ### 🔗 Teste de Conectividade
@@ -346,14 +366,20 @@ docker-compose logs master
 - ✅ Confirmar se estão na mesma rede
 - ✅ Testar ping entre máquinas
 
-#### ❌ "Cliente não encontra PyQt5"
+#### ❌ "Cliente não encontra Qt"
 
 ```bash
-# Instalar PyQt5
-pip install PyQt5
+# Ubuntu/Debian
+sudo apt install qt6-base-dev qt6-tools-dev cmake
 
-# Ou reinstalar dependências
-pip install -r requirements.txt --force-reinstall
+# CentOS/RHEL
+sudo yum install qt6-qtbase-devel cmake
+
+# Windows (usando chocolatey)
+choco install qt-creator-opensource
+
+# macOS (usando homebrew)
+brew install qt6 cmake
 ```
 
 ## 🤝 Contribuição
@@ -374,9 +400,21 @@ mestre-escravo-sistemas-distribuidos/
 │   ├── src/
 │   ├── CMakeLists.txt
 │   └── Dockerfile
-├── 📁 client/              # Cliente (Python)
-│   ├── client.py
-│   └── requirements.txt
+├── 📁 client/              # Cliente Qt (C++)
+│   ├── src/                # Código fonte Qt
+│   │   ├── main.cpp
+│   │   ├── mainwindow.cpp
+│   │   ├── mainwindow.h
+│   │   ├── httpclient.cpp
+│   │   ├── httpclient.h
+│   │   ├── fileprocessor.cpp
+│   │   └── fileprocessor.h
+│   ├── client.pro          # Qt Project File
+│   ├── CMakeLists.txt      # Build CMake
+│   ├── build.sh           # Script build Linux/macOS
+│   ├── build.bat          # Script build Windows
+│   ├── input_files/       # Arquivos de exemplo
+│   └── release/           # Executável compilado
 ├── 📁 docs/                # Documentação e imagens
 │   └── images/
 ├── docker-compose.yml      # Orquestração dos serviços
